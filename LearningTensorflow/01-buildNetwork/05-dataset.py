@@ -13,8 +13,8 @@ tf_y = tf.placeholder(tf.float32, shape=[None, 1])
 # create dataloader
 dataset = tf.data.Dataset.from_tensor_slices((tf_x, tf_y))
 dataset = dataset.shuffle(buffer_size=1000)
-dataset = dataset.batch(32) # 800/32 剩下的社区
-dataset = dataset.repeat(10) # repeat 4 epoch
+dataset = dataset.batch(32) # 800/32 剩下的舍去
+dataset = dataset.repeat(4) # repeat 4 epoch
 iterator = dataset.make_initializable_iterator()
 
 # build neural network
