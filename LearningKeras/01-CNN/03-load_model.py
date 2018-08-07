@@ -2,6 +2,7 @@ import keras
 from keras.models import Sequential
 from keras.layers import Dense, MaxPooling2D, Convolution2D, Activation, Flatten
 from keras.datasets import fashion_mnist
+import keras.optimizers as optimizers
 import numpy as np 
 
 (x_train, y_train), (x_test, y_test) = fashion_mnist.load_data() 
@@ -45,7 +46,36 @@ model.add(Activation('relu'))
 # fully connected layers 2 input (1024) output (10)
 model.add(Dense(10))
 model.add(Activation('softmax'))
+
+'''
+reload weights and continue training
+'''
 model.load_weights('./fashion_mnist_model/fashion_model.h5')
+
+rmsprop = optimizers.adam(lr=0.0001, decay=0.0005)
+model.compile(optimizer=rmsprop,
+              loss='categorical_crossentropy',
+              metrics=['accuracy']
+    )
+
+def generator(features, labels, batch_size):
+
+     # Create empty arrays to contain batch of features and labels#
+     batch_features = np.zeros((batch_size, 28, 28, 1))
+     batch_labels = np.zeros((batch_size,10))
+
+     while True:
+       for i in range(batch_size):
+         # choose random index in features
+         index= np.random.choice(len(features),1)
+         batch_features[i] = features[index]
+         batch_labels[i] = labels[index]
+       yield batch_features, batch_labels
+
+# start training
+
+model.fit_generator(generator(x_train, y_train, 32), epochs=20, steps_per_epoch=200, validation_data=(x_test, y_test), validation_steps=100)
+
 
 pred = model.predict(x_test[20:40])
 print('real label:{0}'.format(np.argmax(y_test[20:40], axis=1)))

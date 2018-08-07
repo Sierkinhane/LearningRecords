@@ -17,7 +17,7 @@ print('c:', c)
 # unsqueeze 对数据的维度进行扩充
 d = torch.unsqueeze(a, dim=0) # 在第零个维度加上一个维数
 e = a.unsqueeze(dim=1)
-print('d:', d)
+print('d:', d.size())
 print('e:', e) # torch.size([5,1])
 
 f = np.linspace(-1, 1, 5) # shape=(5,) 并不是一行五列，它只是一个数组，并不是矩阵
@@ -26,4 +26,3 @@ print('f:', f.size)
 # torch.normal(means=tensor, std=scatter)
 h = torch.FloatTensor([[1],[1]])
 g = torch.normal(h,1)
-print(g)

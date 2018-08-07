@@ -40,7 +40,8 @@ conv1 = tf.layers.conv2d(
 	kernel_size=5,
 	strides=1,
 	padding='same',
-	activation=tf.nn.relu
+	activation=tf.nn.relu,
+	kernel_regularizer=tf.nn.l2_normalize
 	) # 28*28*16
 
 pool1 = tf.layers.max_pooling2d(
@@ -50,10 +51,10 @@ pool1 = tf.layers.max_pooling2d(
 	) # 14*14*16
 
 	  # 14*14*32
-conv2 = tf.layers.conv2d(pool1, 32, 5, 1, 'same', activation=tf.nn.relu)
+conv2 = tf.layers.conv2d(pool1, 32, 5, 1, 'same', activation=tf.nn.relu, kernel_regularizer=tf.nn.l2_normalize)
 pool1 = tf.layers.max_pooling2d(conv2, 2, 2) # 7*7*32
 flat = tf.reshape(pool1, [-1, 7*7*32])
-output = tf.layers.dense(flat, 10) # 用softmax函数激活导致loss=1.5.. 不能下降的原因？
+output = tf.layers.dense(flat, 10, kernel_regularizer=tf.nn.l2_normalize) # 用softmax函数激活导致loss=1.5.. 不能下降的原因？
 
 loss = tf.losses.softmax_cross_entropy(onehot_labels=images_labels[1], logits=output)
 train_op = tf.train.AdamOptimizer(learning_rate=LR).minimize(loss)
@@ -66,6 +67,8 @@ sess.run(tf.local_variables_initializer()) # the local var is for accuracy_op
 sess.run(iterator.initializer, feed_dict={tf_x:mnist.train.images[:], tf_y:mnist.train.labels[:]})
 
 accuracy_his = [[]]
+saver = tf.train.Saver()
+
 for step in range(2001):
 	# b_x, b_y = mnist.train.next_batch(BATCH_SIZE)
 	try:
@@ -88,10 +91,14 @@ for step in range(2001):
 			'''
 			accuracy_, l = sess.run([accuracy, loss], feed_dict={tf_x:test_x, tf_y:test_y})
 			accuracy_his[0].append(accuracy_)
-			print('step:[{0}/10000], the accuracy is {1:.4f}, loss is {2:.4f}'.format(step, accuracy_, l))
+			print('step:[{0}/2000], the accuracy is {1:.4f}, loss is {2:.4f}'.format(step, accuracy_, l))
 
 		if step % 2000 == 0:
 			LR = 1/(1+(step/2000))*LR
+
+		# if step % 1000 == 0:
+		# 	saver.save(sess, './model/mnist-handwritten', global_step=step, write_meta_graph=False)
+			
 	except tf.errors.OutOfRangeError:
 		print('3 epoch finished!')
 		break

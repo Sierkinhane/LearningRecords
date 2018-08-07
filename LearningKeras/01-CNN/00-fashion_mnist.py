@@ -67,6 +67,7 @@ model.compile(optimizer=rmsprop,
               metrics=['accuracy']
     )
 
+
 def generator(features, labels, batch_size):
 
      # Create empty arrays to contain batch of features and labels#
@@ -83,9 +84,9 @@ def generator(features, labels, batch_size):
 
 # start training
 # 暂时不知道怎么控制验证的间隔
-#model.fit(x_train, y_train, batch_size=32, epochs=2, shuffle=True, validation_data=(x_test, y_test))
+# model.fit(x_train, y_train, batch_size=32, epochs=2, shuffle=True, validation_data=(x_test, y_test))
 # verbose Integer. 0, 1, or 2. Verbosity mode. 0 = silent, 1 = progress bar, 2 = one line per epoch.
-model.fit_generator(generator(x_train, y_train, 32), epochs=10, steps_per_epoch=200, validation_data=(x_test, y_test), validation_steps=100)
+model.fit_generator(generator(x_train, y_train, 32), epochs=20, steps_per_epoch=200, validation_data=(x_test, y_test), validation_steps=100)
 
 # 人为控制验证，batch
 # for step in range(2001):

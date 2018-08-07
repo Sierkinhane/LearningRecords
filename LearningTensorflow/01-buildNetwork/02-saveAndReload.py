@@ -9,6 +9,8 @@ np.random.seed(1)
 x = np.linspace(-2, 2, 200)[:, np.newaxis]
 noise = np.random.normal(0, 0.1, size=x.shape)
 y = np.power(x, 2) + noise
+print(x.shape)
+print(y.shape)
 
 def save():
 	# data placeholder
@@ -30,7 +32,7 @@ def save():
 		for step in range(400):
 			sess.run(train_op, feed_dict={tf_x:x, tf_y:y})
 
-		saver.save(sess, './model', write_meta_graph=False) # meta_graph is not recommeded
+		saver.save(sess, './model_1', write_meta_graph=False) # meta_graph is not recommeded
 
 		# plotting
 		pred, l = sess.run([output, loss], feed_dict={tf_x:x, tf_y:y})
@@ -44,8 +46,8 @@ def save():
 def reload():
 	
 	# build entire net again and restore
-	tf_x = tf.placeholder(tf.float32, x.shape)
-	tf_y = tf.placeholder(tf.float32, y.shape)
+	tf_x = tf.placeholder(tf.float32, shape=[None,1])
+	tf_y = tf.placeholder(tf.float32, shape=[None,1])
 
 	hidden = tf.layers.dense(tf_x, 10, activation=tf.nn.relu)
 	output = tf.layers.dense(hidden, 1)
@@ -54,7 +56,7 @@ def reload():
 
 	sess = tf.Session()
 	saver = tf.train.Saver()
-	saver.restore(sess, './model')
+	saver.restore(sess, './model_1')
 
 	# plotting
 	pred, l = sess.run([output, loss], feed_dict={tf_x:x, tf_y:y})

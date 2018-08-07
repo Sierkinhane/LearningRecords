@@ -14,8 +14,8 @@ from torch.autograd import Variable
 tensor = torch.FloatTensor([[1, 2], [3, 4]]) # build a tensor
 variable = Variable(tensor, requires_grad=True) # build a variable, usually for compute grdients
 
-print(tensor)
-print(variable)
+print(tensor.dtype)
+print(variable.dtype)
 
 # till now the tensor and variable seem the same.
 # However, the variable is a part of the graph, it's a part of the auto-gradient.
@@ -28,7 +28,7 @@ print(v_out)
 v_out.backward(retain_graph=True) # backpropagation from v_out
 # v_out =  1/4 * sum(variable*variable)
 # the gradient w.r.t the variable. d(v_out)/d(variable) = d(x^2) = 1/4 * 2 * variable = variable/2
-print(variable.grad)
+print('grad:', variable.grad)
 '''
 tensor([[ 0.5000,  1.0000],
         [ 1.5000,  2.0000]])
